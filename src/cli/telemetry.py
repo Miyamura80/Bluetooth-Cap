@@ -48,7 +48,7 @@ def show_first_run_notice() -> None:
     if is_enabled():
         console.print(
             "[dim]Anonymous usage telemetry is enabled. "
-            "Run 'mycli telemetry disable' or set CLI_TELEMETRY_DISABLED=1 to opt out.[/dim]"
+            "Run 'bluecap telemetry disable' or set CLI_TELEMETRY_DISABLED=1 to opt out.[/dim]"
         )
     state["telemetry_notice_shown"] = True
     save_state(state)
@@ -82,7 +82,7 @@ def record_event(command: str, duration: float, success: bool) -> None:
         "command": command,
         "duration_s": round(duration, 3),
         "success": success,
-        "cli_version": importlib.metadata.version("miyamura80-cli-template"),
+        "cli_version": importlib.metadata.version("bluetooth-cap"),
         "python_version": platform.python_version(),
         "os": platform.system(),
         "machine_id": _machine_id(),

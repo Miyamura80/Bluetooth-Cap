@@ -4,7 +4,7 @@ This project ships a CLI from a single version in `pyproject.toml`:
 
 | Interface | Entry point | Distribution |
 |-----------|------------|--------------|
-| **CLI** | `mycli` | PyPI + GitHub Release |
+| **CLI** | `bluecap` | PyPI + GitHub Release |
 
 ## Prerequisites
 

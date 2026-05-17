@@ -11,7 +11,7 @@ This skill teaches you how to use the CLI interface provided by this project.
 ### Installation
 
 ```bash
-pip install miyamura80-cli-template
+pip install bluetooth-cap
 ```
 
 Or install from source:
@@ -26,13 +26,13 @@ uv sync
 
 ```bash
 # Show help and all available commands
-uv run mycli --help
+uv run bluecap --help
 
 # Run a command
-uv run mycli greet Alice
+uv run bluecap greet Alice
 
 # Scaffold a new command
-uv run mycli init my_command --desc "Does something"
+uv run bluecap init my_command --desc "Does something"
 ```
 
 ### Global Flags
@@ -52,26 +52,26 @@ Global flags go **before** the subcommand:
 
 ```bash
 # JSON output
-uv run mycli --format json config show
+uv run bluecap --format json config show
 
 # Preview without executing
-uv run mycli --dry-run greet Bob
+uv run bluecap --dry-run greet Bob
 
 # Detailed output
-uv run mycli --verbose greet Alice
+uv run bluecap --verbose greet Alice
 
 # Manage configuration
-uv run mycli config show
-uv run mycli config get llm_config.cache_enabled
-uv run mycli config set logging.verbose false
+uv run bluecap config show
+uv run bluecap config get llm_config.cache_enabled
+uv run bluecap config set logging.verbose false
 ```
 
 ### Shell Completions
 
 ```bash
 # Install completions for your shell
-uv run mycli --install-completion
+uv run bluecap --install-completion
 
 # Show completion script
-uv run mycli --show-completion
+uv run bluecap --show-completion
 ```

@@ -32,7 +32,7 @@ _FORMAT_MAP = {
 }
 
 app = typer.Typer(
-    name="mycli",
+    name="bluecap",
     help="CLI Template - a batteries-included Python CLI.",
     no_args_is_help=True,
     rich_markup_mode="rich",
@@ -48,10 +48,10 @@ def _load_cli_branding() -> tuple[str, str]:
 
 def _version_callback(value: bool) -> None:
     if value:
-        version = importlib.metadata.version("miyamura80-cli-template")
+        version = importlib.metadata.version("bluetooth-cap")
         emoji, _ = _load_cli_branding()
         prefix = f"{emoji} " if emoji else ""
-        typer.echo(f"{prefix}mycli {version}")
+        typer.echo(f"{prefix}bluecap {version}")
         raise typer.Exit()
 
 
@@ -178,7 +178,7 @@ def main_cli() -> None:
     _register_builtin_commands()
     _register_user_commands()
 
-    version = importlib.metadata.version("miyamura80-cli-template")
+    version = importlib.metadata.version("bluetooth-cap")
     emoji, primary = _load_cli_branding()
     prefix = f"{emoji} " if emoji else ""
     app.info.help = (

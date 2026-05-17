@@ -1,9 +1,9 @@
 [project]
-name = "miyamura80-cli-template"
+name = "bluetooth-cap"
 version = "0.1.1"
-description = "🪛 CLI tool template (python) with batteries included. Auto-install, updates, linting, dead code analysis, and a whole lot more."
+description = "🧢 bluetooth LED cap reverse engineering CLI for agents"
 authors = [
-    { name = "Miyamura80", email = "eitomiyamura@gmail.com" }
+    { name = "miyamura80", email = "eitomiyamura@gmail.com" }
 ]
 license = { file = "LICENSE" }
 classifiers = [
@@ -62,7 +62,7 @@ Repository = "https://github.com/Miyamura80/CLI-Template"
 Issues = "https://github.com/Miyamura80/CLI-Template/issues"
 
 [project.scripts]
-mycli = "cli:main_cli"
+bluecap = "cli:main_cli"
 
 [build-system]
 requires = ["hatchling"]

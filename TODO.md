@@ -12,4 +12,4 @@
 ## PyPI Packaging & Publishing
 
 - [x] Run through full PyPI packaging: verify `pyproject.toml` metadata (description, classifiers, URLs, license), build with `uv build`, and test install from the wheel
-- [x] Publish to PyPI and confirm `uvx --from miyamura80-cli-template mycli --help` installs correctly with the `mycli` entry point working
+- [x] Publish to PyPI and confirm `uvx --from bluetooth-cap mycli --help` installs correctly with the `mycli` entry point working

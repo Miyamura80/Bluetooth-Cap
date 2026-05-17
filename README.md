@@ -1,11 +1,11 @@
-# cli-template
+# bluetooth-cap
 
 <p align="center">
   <img src="media/banner.png" alt="2" width="400">
 </p>
 
 <p align="center">
-<b>Batteries-included Python CLI template. Auto-discovery commands, global flags, output formatting, self-update, and a whole lot more.</b>
+<b>🧢 bluetooth LED cap reverse engineering CLI for agents</b>
 </p>
 
 <p align="center">
@@ -40,7 +40,7 @@
 ```text
 Install the CLI and download the usage skill:
 
-pip install miyamura80-cli-template
+pip install bluetooth-cap
 
 curl -fsSL https://raw.githubusercontent.com/Miyamura80/CLI-Template/main/scripts/install-skills.sh -o install-skills.sh
 bash install-skills.sh && rm install-skills.sh
@@ -74,9 +74,9 @@ Opinionated Python CLI template for fast development. The `saas` branch extends 
 ```bash
 make onboard              # interactive setup (rename, deps, env, hooks)
 uv sync                   # install deps
-uv run mycli --help       # see all commands
-uv run mycli greet Alice  # run a command
-uv run mycli init my_command  # scaffold a new command
+uv run bluecap --help       # see all commands
+uv run bluecap greet Alice  # run a command
+uv run bluecap init my_command  # scaffold a new command
 ```
 
 ## CLI Usage
@@ -93,9 +93,9 @@ Global flags go **before** the subcommand:
 | `--version` | `-V` | Print version and exit |
 
 ```bash
-uv run mycli --format json config show     # JSON output
-uv run mycli --dry-run greet Bob           # preview without executing
-uv run mycli --verbose greet Alice         # detailed output
+uv run bluecap --format json config show     # JSON output
+uv run bluecap --dry-run greet Bob           # preview without executing
+uv run bluecap --verbose greet Alice         # detailed output
 ```
 
 ## Adding Commands
@@ -115,7 +115,7 @@ def main(name: Annotated[str, typer.Argument(help="Who to greet.")]) -> None:
 ```
 
 ```bash
-uv run mycli hello World   # Hello, World!
+uv run bluecap hello World   # Hello, World!
 ```
 
 **Subcommand group** - export `app = typer.Typer()`:
@@ -133,10 +133,10 @@ def migrate() -> None:
 ```
 
 ```bash
-uv run mycli db migrate
+uv run bluecap db migrate
 ```
 
-Or scaffold with: `uv run mycli init my_command --desc "Does something"`.
+Or scaffold with: `uv run bluecap init my_command --desc "Does something"`.
 
 ## Configuration
 
@@ -153,9 +153,9 @@ global_config.OPENAI_API_KEY
 CLI config inspection:
 
 ```bash
-uv run mycli config show                           # full config
-uv run mycli config get llm_config.cache_enabled   # single value
-uv run mycli config set logging.verbose false      # write override
+uv run bluecap config show                           # full config
+uv run bluecap config get llm_config.cache_enabled   # single value
+uv run bluecap config set logging.verbose false      # write override
 ```
 
 [Full configuration docs](manual_docs/configuration.md)
