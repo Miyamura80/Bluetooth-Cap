@@ -1,23 +1,23 @@
 [project]
 name = "bluetooth-cap"
 version = "0.1.1"
-description = "🧢 bluetooth LED cap reverse engineering CLI for agents"
+description = "🧢 CLI for interfacing with BLE LED matrix cap (reverse engineering & control)"
 authors = [
     { name = "miyamura80", email = "eitomiyamura@gmail.com" }
 ]
 license = { file = "LICENSE" }
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 3 - Alpha",
     "Environment :: Console",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.12",
-    "Topic :: Software Development :: Libraries",
+    "Topic :: System :: Hardware",
     "Topic :: Utilities",
 ]
-keywords = ["cli", "template", "typer", "uv", "tooling"]
+keywords = ["bluetooth", "ble", "led", "cap", "reverse-engineering", "bleak"]
 dependencies = [
     "pyyaml>=6.0.3",
     "python-dotenv>=1.2.1",
@@ -28,14 +28,8 @@ dependencies = [
     "termcolor>=2.5.0",
     "loguru>=0.7.3",
     "vulture>=2.14",
-    "dspy>=3.1.2",
-    "langfuse>=4.0.0",
-    # litellm 1.82.7+ compromised via supply chain attack (credential-stealing malware)
-    # See: https://github.com/BerriAI/litellm/issues/24512
-    "litellm>=1.59.8,<1.82.7",
     "tenacity>=9.0.0",
     "pillow>=12.1.0",
-    "google-genai>=1.60.0",
     "ty>=0.0.14",
     "pytest-env>=1.2.0",
     "pydantic-settings>=2.7.1",
@@ -52,14 +46,15 @@ dependencies = [
     "rich>=14.3.1",
     "packaging>=24.0",
     "keyring>=25.0.0",
+    "bleak>=3.0.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
 
 [project.urls]
-Homepage = "https://github.com/Miyamura80/CLI-Template"
-Repository = "https://github.com/Miyamura80/CLI-Template"
-Issues = "https://github.com/Miyamura80/CLI-Template/issues"
+Homepage = "https://github.com/Miyamura80/Bluetooth-Cap"
+Repository = "https://github.com/Miyamura80/Bluetooth-Cap"
+Issues = "https://github.com/Miyamura80/Bluetooth-Cap/issues"
 
 [project.scripts]
 bluecap = "cli:main_cli"
@@ -127,7 +122,6 @@ exclude = [
     "src/utils/theme.py",
     "tests/conftest.py",
     "init/",
-    "onboard.py",
     "commands/",
     "src/cli/",
     "cli.py",
@@ -136,9 +130,7 @@ exclude = [
 
 [tool.file_length]
 max_lines = 500
-exclude = [
-    "onboard.py",
-]
+exclude = []
 
 [tool.coverage.run]
 branch = true

@@ -40,19 +40,6 @@ help: ## Show this help message
 ########################################################
 
 ### Initialization
-.PHONY: onboard banner logo
-onboard: check_uv ## Run interactive onboarding CLI
-	@$(PYTHON) onboard.py
-
-banner: check_uv ## Generate project banner image
-	@echo "$(YELLOW)🔍Generating banner...$(RESET)"
-	@uv run python -m init.generate_banner
-	@echo "$(GREEN)✅Banner generated.$(RESET)"
-
-logo: check_uv ## Generate logo and favicon for docs
-	@echo "$(YELLOW)🔍Generating logo and favicon...$(RESET)"
-	@uv run python -m init.generate_logo
-	@echo "$(GREEN)✅Logo and favicon generated in docs/public/$(RESET)"
 
 
 ########################################################

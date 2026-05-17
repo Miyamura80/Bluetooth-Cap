@@ -1,5 +1,4 @@
 import os
-import re
 import warnings
 from pathlib import Path
 from typing import Any
@@ -17,18 +16,14 @@ from pydantic_settings import (
 # Import configuration models
 from .config_models import (
     CliConfig,
-    DefaultLlm,
     ExampleParent,
     FeaturesConfig,
-    LlmConfig,
     LoggingConfig,
     TelemetryConfig,
 )
 
 # Get the path to the root directory (one level up from common)
 root_dir = Path(__file__).parent.parent
-
-OPENAI_O_SERIES_PATTERN = r"o(\d+)(-mini)?"
 
 
 # Custom YAML settings source
@@ -170,11 +165,8 @@ class Config(BaseSettings):
     )
 
     # Top-level fields
-    model_name: str
     dot_global_config_health_check: bool
     example_parent: ExampleParent
-    default_llm: DefaultLlm
-    llm_config: LlmConfig
     logging: LoggingConfig
     features: FeaturesConfig = Field(default_factory=lambda: FeaturesConfig())
     telemetry: TelemetryConfig = Field(default_factory=lambda: TelemetryConfig())
@@ -182,11 +174,6 @@ class Config(BaseSettings):
 
     # Environment variables
     DEV_ENV: str
-    OPENAI_API_KEY: str | None = None
-    ANTHROPIC_API_KEY: str | None = None
-    GROQ_API_KEY: str | None = None
-    PERPLEXITY_API_KEY: str | None = None
-    GEMINI_API_KEY: str | None = None
 
     # Runtime environment (computed via default_factory)
     is_local: bool = Field(
@@ -225,42 +212,6 @@ class Config(BaseSettings):
     def to_dict(self) -> dict[str, Any]:
         """Convert config to dictionary."""
         return self.model_dump()
-
-    def _identify_provider(self, model_name: str) -> str:
-        """Identify the LLM provider from a model name string."""
-        name_lower = model_name.lower()
-        if "gpt" in name_lower or re.match(OPENAI_O_SERIES_PATTERN, name_lower):
-            return "openai"
-        if "claude" in name_lower or "anthropic" in name_lower:
-            return "anthropic"
-        if "groq" in name_lower:
-            return "groq"
-        if "perplexity" in name_lower:
-            return "perplexity"
-        if "gemini" in name_lower:
-            return "gemini"
-        return "unknown"
-
-    def llm_api_key(self, model_name: str | None = None) -> str:
-        """Returns the appropriate API key based on the model name."""
-        model_identifier = model_name or self.model_name
-        provider = self._identify_provider(model_identifier)
-        api_keys = {
-            "openai": self.OPENAI_API_KEY,
-            "anthropic": self.ANTHROPIC_API_KEY,
-            "groq": self.GROQ_API_KEY,
-            "perplexity": self.PERPLEXITY_API_KEY,
-            "gemini": self.GEMINI_API_KEY,
-        }
-        if provider in api_keys:
-            key = api_keys[provider]
-            if key is None:
-                raise ValueError(
-                    f"API key for provider '{provider}' is not configured. "
-                    f"Set {provider.upper()}_API_KEY in your .env file."
-                )
-            return key
-        raise ValueError(f"No API key configured for model: {model_identifier}")
 
 
 # Load .env files before creating the config instance

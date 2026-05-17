@@ -5,10 +5,13 @@
 1.  **Prerequisites**:
     *   Python >= 3.12
     *   `uv` (for dependency management)
+    *   A BLE-capable machine (macOS, Linux with BlueZ, Windows)
+    *   The LED cap powered on and nearby for integration testing
 
 2.  **Setup**:
     ```bash
-    make setup
+    uv sync
+    uv run bluecap doctor --fix
     ```
 
 3.  **Run Tests**:
@@ -24,7 +27,14 @@
     ```bash
     make ci
     ```
-    This runs formatting, linting, type checking, and dead code detection.
+
+## Protocol Research
+
+If you're contributing to the BLE protocol reverse engineering:
+
+1. Use nRF Connect (mobile) or Wireshark with an nRF52840 dongle to capture packets.
+2. Document findings in `docs/` with hex dumps and annotated field breakdowns.
+3. Add corresponding CLI commands in `commands/` once the protocol is understood.
 
 ## Code Style
 
