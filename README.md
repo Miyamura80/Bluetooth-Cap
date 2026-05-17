@@ -24,6 +24,9 @@
 
 ---
 
+<img width="512" height="501" alt="Screenshot 2026-05-17 at 17 37 27" src="https://github.com/user-attachments/assets/b1e27c64-e893-44d3-af75-aa11e932a1a3" />
+
+
 A Python CLI for scanning, connecting to, and (eventually) controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
 
 Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
