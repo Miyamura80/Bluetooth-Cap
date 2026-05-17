@@ -12,8 +12,6 @@ from src.cli.state import is_dry_run
 app = typer.Typer()
 console = Console()
 
-DEFAULT_DEVICE_NAME = "LED_BLE_62F7C880"
-
 
 async def _find_device(name: str, timeout: float):
     from bleak import BleakScanner
@@ -87,22 +85,40 @@ async def _read_notify(name: str, char_uuid: str, timeout: float) -> None:
             console.print(f"[dim]Received {len(received)} notification(s).[/dim]")
 
 
+def _resolve_device_name(name: str | None) -> str:
+    if name:
+        return name
+    try:
+        from common import global_config
+
+        ble_cfg = getattr(global_config, "ble", None)
+        if isinstance(ble_cfg, dict) and ble_cfg.get("device_name"):
+            return ble_cfg["device_name"]
+    except Exception:  # noqa: BLE001
+        pass
+    console.print("[red]No device name specified.[/red]")
+    console.print("[dim]Use --name or set ble.device_name in global_config.yaml[/dim]")
+    console.print("[dim]Example: bluecap device info --name LED_BLE_62F7C880[/dim]")
+    raise typer.Exit(code=1)
+
+
 @app.command()
 def info(
     name: Annotated[
-        str,
-        typer.Option("--name", "-n", help="BLE device name to connect to."),
-    ] = DEFAULT_DEVICE_NAME,
+        str | None,
+        typer.Option("--name", "-n", help="BLE device name (e.g. LED_BLE_62F7C880)."),
+    ] = None,
     timeout: Annotated[
         float,
         typer.Option("--timeout", "-t", help="Scan timeout in seconds."),
     ] = 10.0,
 ) -> None:
     """Connect to a LED cap and show its BLE service tree."""
+    device_name = _resolve_device_name(name)
     if is_dry_run():
-        typer.echo(f"[DRY RUN] Would connect to '{name}'")
+        typer.echo(f"[DRY RUN] Would connect to '{device_name}'")
         return
-    asyncio.run(_connect_and_inspect(name, timeout))
+    asyncio.run(_connect_and_inspect(device_name, timeout))
 
 
 @app.command()
@@ -112,16 +128,17 @@ def notify(
         typer.Argument(help="Characteristic UUID to subscribe to."),
     ],
     name: Annotated[
-        str,
-        typer.Option("--name", "-n", help="BLE device name."),
-    ] = DEFAULT_DEVICE_NAME,
+        str | None,
+        typer.Option("--name", "-n", help="BLE device name (e.g. LED_BLE_62F7C880)."),
+    ] = None,
     timeout: Annotated[
         float,
         typer.Option("--timeout", "-t", help="Scan timeout in seconds."),
     ] = 10.0,
 ) -> None:
     """Subscribe to BLE notifications from a characteristic."""
+    device_name = _resolve_device_name(name)
     if is_dry_run():
-        typer.echo(f"[DRY RUN] Would subscribe to {char} on '{name}'")
+        typer.echo(f"[DRY RUN] Would subscribe to {char} on '{device_name}'")
         return
-    asyncio.run(_read_notify(name, char, timeout))
+    asyncio.run(_read_notify(device_name, char, timeout))

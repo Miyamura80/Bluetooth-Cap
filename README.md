@@ -24,16 +24,16 @@
 
 ---
 
-A Python CLI for scanning, connecting to, and (eventually) controlling a BLE LED matrix cap purchased in China. The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
+A Python CLI for scanning, connecting to, and (eventually) controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
 
 Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
 
 ## Quick Start
 
 ```bash
-uv sync                        # install deps (includes bleak for BLE)
-uv run bluecap scan            # find nearby LED_BLE devices
-uv run bluecap device info     # connect and inspect BLE services
+uv sync                                              # install deps (includes bleak for BLE)
+uv run bluecap scan                                  # find nearby LED_BLE devices
+uv run bluecap device info --name LED_BLE_62F7C880   # connect and inspect BLE services
 ```
 
 ## Commands
@@ -58,14 +58,13 @@ uv run bluecap scan --prefix "LED"     # custom name prefix filter
 ### Device
 
 ```bash
-uv run bluecap device info                          # connect to default device
-uv run bluecap device info --name LED_BLE_AABBCCDD  # connect to specific device
+uv run bluecap device info --name LED_BLE_62F7C880   # connect to a specific device
 uv run bluecap device notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
 ```
 
 ## Device Info
 
-**Known device**: `LED_BLE_62F7C880`
+Devices advertise as `LED_BLE_<ID>` (e.g. `LED_BLE_62F7C880`).
 
 | Service UUID | Characteristics | Description |
 |---|---|---|
