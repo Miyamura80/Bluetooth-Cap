@@ -28,13 +28,13 @@
     make ci
     ```
 
-## Protocol Research
+## Protocol Extension
 
-If you're contributing to the BLE protocol reverse engineering:
+The iPIXEL Color protocol is implemented in `src/protocol/`. To add new commands:
 
-1. Use nRF Connect (mobile) or Wireshark with an nRF52840 dongle to capture packets.
-2. Document findings in `docs/` with hex dumps and annotated field breakdowns.
-3. Add corresponding CLI commands in `commands/` once the protocol is understood.
+1. Use `bluecap send` to send raw bytes and `bluecap notify` to observe responses.
+2. Add the command encoder to `src/protocol/commands.py` and a CLI command in `commands/`.
+3. Use nRF Connect (mobile) or Wireshark with an nRF52840 dongle to capture packets from the official app for undocumented commands.
 
 ## Code Style
 

@@ -124,6 +124,7 @@ exclude = [
     "init/",
     "commands/",
     "src/cli/",
+    "src/protocol/",
     "cli.py",
     "templates/"
 ]

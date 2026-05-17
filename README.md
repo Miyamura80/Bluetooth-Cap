@@ -11,9 +11,8 @@
 <p align="center">
   <a href="#quick-start">Quick Start</a> •
   <a href="#commands">Commands</a> •
-  <a href="#device-info">Device Info</a> •
-  <a href="#configuration">Configuration</a> •
-  <a href="#roadmap">Roadmap</a>
+  <a href="#protocol">Protocol</a> •
+  <a href="#configuration">Configuration</a>
 </p>
 
 <p align="center">
@@ -24,9 +23,7 @@
 
 ---
 
-A Python CLI for scanning, connecting to, and (eventually) controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
-
-Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
+A Python CLI for controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1) (32x16 LED, iPIXEL Color protocol). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
 
 <img width="512" height="501" alt="Screenshot 2026-05-17 at 17 37 27" src="https://github.com/user-attachments/assets/b1e27c64-e893-44d3-af75-aa11e932a1a3" />
 
@@ -50,7 +47,10 @@ bash install-skills.sh && rm install-skills.sh
 ```bash
 uv sync                                              # install deps (includes bleak for BLE)
 uv run bluecap scan                                  # find nearby LED_BLE devices
-uv run bluecap device info --name LED_BLE_62F7C880   # connect and inspect BLE services
+uv run bluecap info --name LED_BLE_62F7C880          # connect and inspect BLE services
+uv run bluecap probe                                 # detect device type and LED dimensions
+uv run bluecap power on                              # power on the cap
+uv run bluecap brightness 50                         # set brightness to 50%
 ```
 
 ## Commands
@@ -58,8 +58,20 @@ uv run bluecap device info --name LED_BLE_62F7C880   # connect and inspect BLE s
 | Command | Description |
 |---------|-------------|
 | `bluecap scan` | Scan for nearby BLE LED cap devices |
-| `bluecap device info` | Connect to cap and display service/characteristic tree |
-| `bluecap device notify <uuid>` | Subscribe to notifications from a characteristic |
+| `bluecap info` | Connect to cap and display service/characteristic tree |
+| `bluecap probe` | Query device type and LED matrix dimensions |
+| `bluecap power on\|off` | Turn the LED cap on or off |
+| `bluecap brightness <1-100>` | Set LED brightness |
+| `bluecap text <msg>` | Display static or scrolling text |
+| `bluecap image <file>` | Display a PNG, JPEG, or GIF animation |
+| `bluecap clock` | Display a clock (multiple styles, 12h/24h) |
+| `bluecap flip` | Flip the display upside down |
+| `bluecap screen <1-9>` | Select a display buffer slot |
+| `bluecap erase <slots>` | Erase display buffer slots |
+| `bluecap pixel <x> <y>` | Set a single pixel in DIY mode |
+| `bluecap default` | Return to default display mode |
+| `bluecap send <hex>` | Send raw bytes (reverse engineering tool) |
+| `bluecap notify <uuid>` | Subscribe to BLE notifications |
 | `bluecap doctor` | Check project environment health |
 | `bluecap config show` | Show current configuration |
 
@@ -72,23 +84,56 @@ uv run bluecap scan --all              # show all BLE devices
 uv run bluecap scan --prefix "LED"     # custom name prefix filter
 ```
 
-### Device
+### Device Control
 
 ```bash
-uv run bluecap device info --name LED_BLE_62F7C880   # connect to a specific device
-uv run bluecap device notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
+uv run bluecap info                    # connect and show BLE service tree
+uv run bluecap probe                   # detect device type and matrix size
+uv run bluecap power on                # turn on
+uv run bluecap power off               # turn off
+uv run bluecap brightness 75           # set brightness to 75%
 ```
 
-## Device Info
+### Display
 
-Devices advertise as `LED_BLE_<ID>` (e.g. `LED_BLE_62F7C880`).
+```bash
+uv run bluecap text "Hello"                        # static text
+uv run bluecap text "Hello World" --scroll          # scrolling text (GIF-based)
+uv run bluecap text "Alert" --color ff0000          # red text
+uv run bluecap image photo.png                      # display an image (resized to 32x16)
+uv run bluecap image animation.gif                  # play a GIF animation
+uv run bluecap clock --style 3 --24h                # clock display, style 3
+uv run bluecap pixel 5 8 --color 00ff00             # set pixel (5,8) to green
+```
+
+### Reverse Engineering
+
+```bash
+uv run bluecap send 05 00 07 01 01     # send raw bytes (power on command)
+uv run bluecap send 05 00 04 80 32     # send raw bytes (brightness 50%)
+uv run bluecap send --no-listen AA BB  # send without listening for response
+uv run bluecap notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
+```
+
+## Protocol
+
+Uses the **iPIXEL Color** protocol. All commands are written to characteristic `fa02`, responses come back on `fa03`.
+
+Command format: `[LEN_LO][LEN_HI][CMD_LO][CMD_HI][DATA...]` (little-endian).
 
 | Service UUID | Characteristics | Description |
 |---|---|---|
-| `000000fa-0000-1000-8000-00805f9b34fb` | `fa02` (write), `fa03` (notify) | Primary data channel |
-| `0000ae00-0000-1000-8000-00805f9b34fb` | `ae01` (write), `ae02` (notify) | Secondary channel |
+| `000000fa-0000-1000-8000-00805f9b34fb` | `fa02` (write), `fa03` (notify) | Primary data channel (iPIXEL protocol) |
+| `0000ae00-0000-1000-8000-00805f9b34fb` | `ae01` (write), `ae02` (notify) | Jieli RCSP channel (auth/OTA) |
 
-Protocol details TBD - reverse engineering not yet started.
+| Command | Bytes | Description |
+|---|---|---|
+| Power on | `05 00 07 01 01` | Turn display on |
+| Power off | `05 00 07 01 00` | Turn display off |
+| Brightness 50% | `05 00 04 80 32` | Set brightness (1-100) |
+| Device info | `08 00 01 80 HH MM SS 00` | Query device type (also syncs clock) |
+| Default mode | `04 00 03 80` | Return to default display |
+| Flip display | `05 00 06 80 01` | Flip display upside down |
 
 ## Configuration
 
@@ -100,16 +145,6 @@ ble:
   scan_timeout: 10.0
   device_prefix: "LED_BLE"
 ```
-
-## Roadmap
-
-- [x] BLE device scanning
-- [x] Service/characteristic enumeration
-- [x] Notification subscription
-- [ ] Protocol reverse engineering (packet capture & analysis)
-- [ ] Display text/images on LED matrix
-- [ ] Animation support
-- [ ] Brightness/speed control
 
 ## Credits
 
