@@ -23,25 +23,15 @@ class TestCLI(TestTemplate):
         assert result.exit_code == 0
         assert "CLI Template" in result.output
 
-    def test_greet(self):
-        result = runner.invoke(app, ["greet", "Alice"])
-        assert result.exit_code == 0
-        assert "Hello, Alice!" in result.output
-
-    def test_greet_shout(self):
-        result = runner.invoke(app, ["greet", "Alice", "--shout"])
-        assert result.exit_code == 0
-        assert "HELLO, ALICE!" in result.output
-
-    def test_greet_dry_run(self):
-        result = runner.invoke(app, ["--dry-run", "greet", "Bob"])
+    def test_scan_dry_run(self):
+        result = runner.invoke(app, ["--dry-run", "scan"])
         assert result.exit_code == 0
         assert "DRY RUN" in result.output
 
-    def test_greet_times(self):
-        result = runner.invoke(app, ["greet", "Alice", "--times", "3"])
+    def test_device_info_dry_run(self):
+        result = runner.invoke(app, ["--dry-run", "device", "info"])
         assert result.exit_code == 0
-        assert result.output.count("Hello, Alice!") == 3
+        assert "DRY RUN" in result.output
 
     def test_config_show(self):
         result = runner.invoke(app, ["config", "show"])

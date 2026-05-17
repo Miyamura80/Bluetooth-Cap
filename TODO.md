@@ -1,15 +1,18 @@
 # TODO
 
-## Telemetry Integration
+## Protocol Reverse Engineering
 
-`record_event()` and `show_first_run_notice()` in `src/cli/telemetry.py` are implemented but never called.
+- [ ] Capture BLE packets while using the official phone app (use Wireshark + nRF Connect)
+- [ ] Document the packet format for service `0x00FA` (primary data channel)
+- [ ] Document the packet format for service `0xAE00` (secondary channel)
+- [ ] Identify command structure: header, payload, checksum
+- [ ] Map commands: set text, set animation, set brightness, set speed
 
-- [x] Call `show_first_run_notice()` in the `main()` callback in `cli.py` so the opt-out notice displays on first use
-- [x] Wrap `app()` in `main_cli()` to time command execution and call `record_event()` with the command name, duration, and success/failure
-- [x] Set a telemetry endpoint in `common/global_config.yaml` (`telemetry.endpoint`) and wire `record_event()` to POST events there when the endpoint is configured
-- [x] Add tests for telemetry integration (notice shown once, events recorded, opt-out respected)
+## CLI Features
 
-## PyPI Packaging & Publishing
-
-- [x] Run through full PyPI packaging: verify `pyproject.toml` metadata (description, classifiers, URLs, license), build with `uv build`, and test install from the wheel
-- [x] Publish to PyPI and confirm `uvx --from bluetooth-cap mycli --help` installs correctly with the `mycli` entry point working
+- [ ] `bluecap send` command - send raw bytes to a characteristic
+- [ ] `bluecap text` command - display text on the LED matrix (after protocol is known)
+- [ ] `bluecap image` command - display bitmap on the LED matrix
+- [ ] `bluecap animate` command - play animations
+- [ ] Device auto-reconnection with retry logic
+- [ ] Save device address to config for faster connections (skip scan)

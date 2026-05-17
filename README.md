@@ -5,176 +5,99 @@
 </p>
 
 <p align="center">
-<b>🧢 bluetooth LED cap reverse engineering CLI for agents</b>
+<b>🧢 CLI for interfacing with BLE LED matrix cap</b>
 </p>
 
 <p align="center">
-  <a href="#key-features">Key Features</a> •
   <a href="#quick-start">Quick Start</a> •
-  <a href="#cli-usage">CLI Usage</a> •
-  <a href="#adding-commands">Adding Commands</a> •
+  <a href="#commands">Commands</a> •
+  <a href="#device-info">Device Info</a> •
   <a href="#configuration">Configuration</a> •
-  <a href="#credits">Credits</a> •
-  <a href="#about-the-core-contributors">About the Core Contributors</a>
+  <a href="#roadmap">Roadmap</a>
 </p>
 
 <p align="center">
-  <img alt="Project Version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FMiyamura80%2FCLI-Template%2Fmain%2Fpyproject.toml&query=%24.project.version&label=version&color=blue">
-  <img alt="Python Version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FMiyamura80%2FCLI-Template%2Fmain%2Fpyproject.toml&query=%24.project['requires-python']&label=python&logo=python&color=blue">
-  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Miyamura80/CLI-Template">
-  <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/Miyamura80/CLI-Template/a_test_target_tests.yml?branch=main">
-
+  <img alt="Project Version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FMiyamura80%2FBluetooth-Cap%2Fmain%2Fpyproject.toml&query=%24.project.version&label=version&color=blue">
+  <img alt="Python Version" src="https://img.shields.io/badge/dynamic/toml?url=https%3A%2F%2Fraw.githubusercontent.com%2FMiyamura80%2FBluetooth-Cap%2Fmain%2Fpyproject.toml&query=%24.project['requires-python']&label=python&logo=python&color=blue">
+  <img alt="GitHub repo size" src="https://img.shields.io/github/repo-size/Miyamura80/Bluetooth-Cap">
 </p>
 
 ---
 
-<p align="center">
-  <img src="media/cli_demo.gif" alt="CLI Demo" width="600">
-</p>
+A Python CLI for scanning, connecting to, and (eventually) controlling a BLE LED matrix cap purchased in China. The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
 
-
-## Agent Prompt
-
-> Copy and paste this into your AI coding agent (Claude Code, Cursor, Copilot, etc.) to install:
-
-```text
-Install the CLI and download the usage skill:
-
-pip install bluetooth-cap
-
-curl -fsSL https://raw.githubusercontent.com/Miyamura80/CLI-Template/main/scripts/install-skills.sh -o install-skills.sh
-bash install-skills.sh && rm install-skills.sh
-```
-
-## Key Features
-
-Opinionated Python CLI template for fast development. The `saas` branch extends `main` with web framework, auth, and payments.
-
-| Feature | `main` | `saas` |
-|---------|:------:|:------:|
-| Auto-discovery command system | ✅ | ✅ |
-| Interactive fallback prompts | ✅ | ✅ |
-| Shell completions | ✅ | ✅ |
-| Self-update | ✅ | ✅ |
-| Anonymous telemetry with opt-out | ✅ | ✅ |
-| UV + Pydantic config | ✅ | ✅ |
-| CI/Linters (Ruff, Vulture) | ✅ | ✅ |
-| Pre-commit hooks (prek) | ✅ | ✅ |
-| LLM (DSPY + LangFuse Observability) | ✅ | ✅ |
-| FastAPI + Uvicorn | ❌ | ✅ |
-| SQLAlchemy + Alembic | ❌ | ✅ |
-| Auth (WorkOS + API keys) | ❌ | ✅ |
-| Payments (Stripe) | ❌ | ✅ |
-| Ralph Wiggum Agent Loop | ✅ | ✅ |
-
-[Full comparison](manual_docs/branch_comparison.md)
+Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
 
 ## Quick Start
 
 ```bash
-make onboard              # interactive setup (rename, deps, env, hooks)
-uv sync                   # install deps
-uv run bluecap --help       # see all commands
-uv run bluecap greet Alice  # run a command
-uv run bluecap init my_command  # scaffold a new command
+uv sync                        # install deps (includes bleak for BLE)
+uv run bluecap scan            # find nearby LED_BLE devices
+uv run bluecap device info     # connect and inspect BLE services
 ```
 
-## CLI Usage
+## Commands
 
-Global flags go **before** the subcommand:
+| Command | Description |
+|---------|-------------|
+| `bluecap scan` | Scan for nearby BLE LED cap devices |
+| `bluecap device info` | Connect to cap and display service/characteristic tree |
+| `bluecap device notify <uuid>` | Subscribe to notifications from a characteristic |
+| `bluecap doctor` | Check project environment health |
+| `bluecap config show` | Show current configuration |
 
-| Flag | Short | Description |
+### Scan
+
+```bash
+uv run bluecap scan                    # find LED_BLE_* devices (10s scan)
+uv run bluecap scan --timeout 20       # longer scan
+uv run bluecap scan --all              # show all BLE devices
+uv run bluecap scan --prefix "LED"     # custom name prefix filter
+```
+
+### Device
+
+```bash
+uv run bluecap device info                          # connect to default device
+uv run bluecap device info --name LED_BLE_AABBCCDD  # connect to specific device
+uv run bluecap device notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
+```
+
+## Device Info
+
+**Known device**: `LED_BLE_62F7C880`
+
+| Service UUID | Characteristics | Description |
 |---|---|---|
-| `--verbose` | `-v` | Increase output verbosity |
-| `--quiet` | `-q` | Suppress non-essential output |
-| `--debug` | | Show full tracebacks on error |
-| `--format` | `-f` | Output format: `table`, `json`, `plain` |
-| `--dry-run` | | Preview actions without executing |
-| `--version` | `-V` | Print version and exit |
+| `000000fa-0000-1000-8000-00805f9b34fb` | `fa02` (write), `fa03` (notify) | Primary data channel |
+| `0000ae00-0000-1000-8000-00805f9b34fb` | `ae01` (write), `ae02` (notify) | Secondary channel |
 
-```bash
-uv run bluecap --format json config show     # JSON output
-uv run bluecap --dry-run greet Bob           # preview without executing
-uv run bluecap --verbose greet Alice         # detailed output
-```
-
-## Adding Commands
-
-Drop a Python file in `commands/` and it is auto-discovered.
-
-**Single command** - export a `main()` function:
-
-```python
-# commands/hello.py
-from typing import Annotated
-import typer
-
-def main(name: Annotated[str, typer.Argument(help="Who to greet.")]) -> None:
-    """Say hello."""
-    typer.echo(f"Hello, {name}!")
-```
-
-```bash
-uv run bluecap hello World   # Hello, World!
-```
-
-**Subcommand group** - export `app = typer.Typer()`:
-
-```python
-# commands/db.py
-import typer
-
-app = typer.Typer()
-
-@app.command()
-def migrate() -> None:
-    """Run migrations."""
-    ...
-```
-
-```bash
-uv run bluecap db migrate
-```
-
-Or scaffold with: `uv run bluecap init my_command --desc "Does something"`.
+Protocol details TBD - reverse engineering not yet started.
 
 ## Configuration
 
-```python
-from common import global_config
+BLE settings in `common/global_config.yaml`:
 
-# Access config values from common/global_config.yaml
-global_config.example_parent.example_child
-
-# Access secrets from .env
-global_config.OPENAI_API_KEY
+```yaml
+ble:
+  device_name: "LED_BLE_62F7C880"
+  scan_timeout: 10.0
+  device_prefix: "LED_BLE"
 ```
 
-CLI config inspection:
+## Roadmap
 
-```bash
-uv run bluecap config show                           # full config
-uv run bluecap config get llm_config.cache_enabled   # single value
-uv run bluecap config set logging.verbose false      # write override
-```
-
-[Full configuration docs](manual_docs/configuration.md)
+- [x] BLE device scanning
+- [x] Service/characteristic enumeration
+- [x] Notification subscription
+- [ ] Protocol reverse engineering (packet capture & analysis)
+- [ ] Display text/images on LED matrix
+- [ ] Animation support
+- [ ] Brightness/speed control
 
 ## Credits
 
-This software uses the following tools:
-- [Cursor: The AI Code Editor](https://cursor.com)
-- [uv](https://docs.astral.sh/uv/)
-- [Typer: CLI framework](https://typer.tiangolo.com/)
-- [Rich: Terminal formatting](https://rich.readthedocs.io/)
-- [prek: Rust-based pre-commit framework](https://github.com/j178/prek)
-- [DSPY: Pytorch for LLM Inference](https://dspy.ai/)
-- [LangFuse: LLM Observability Tool](https://langfuse.com/)
-
-## About the Core Contributors
-
-<a href="https://github.com/Miyamura80/CLI-Template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Miyamura80/CLI-Template" />
-</a>
-
-Made with [contrib.rocks](https://contrib.rocks).
+- [Bleak](https://bleak.readthedocs.io/) - Cross-platform BLE library
+- [Typer](https://typer.tiangolo.com/) - CLI framework
+- [Rich](https://rich.readthedocs.io/) - Terminal formatting
+- [uv](https://docs.astral.sh/uv/) - Python package manager
