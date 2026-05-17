@@ -33,7 +33,10 @@ def _build_results_table(
 async def _scan_ble(timeout: float, prefix: str, show_all: bool) -> None:
     from bleak import BleakScanner
 
-    console.print(f"[dim]Scanning for BLE devices ({timeout}s)...[/dim]")
+    quiet = is_quiet()
+
+    if not quiet:
+        console.print(f"[dim]Scanning for BLE devices ({timeout}s)...[/dim]")
     devices = await BleakScanner.discover(timeout=timeout, return_adv=True)
 
     results = []
@@ -47,6 +50,12 @@ async def _scan_ble(timeout: float, prefix: str, show_all: bool) -> None:
         )
 
     matched, other = _build_results_table(results, prefix)
+
+    if quiet:
+        emit = matched + other if show_all else matched
+        for d in emit:
+            typer.echo(d["name"])
+        return
 
     if not matched:
         console.print(f"[yellow]No devices matching '{prefix}*' found.[/yellow]")
@@ -71,10 +80,6 @@ async def _scan_ble(timeout: float, prefix: str, show_all: bool) -> None:
         for d in other:
             table.add_row(d["name"], d["address"], str(d["rssi"]))
         console.print(table)
-
-    if is_quiet():
-        for d in matched:
-            typer.echo(d["name"])
 
 
 def main(

@@ -66,12 +66,13 @@ async def _read_notify(name: str, char_uuid: str, timeout: float) -> None:
     async with BleakClient(device) as client:
         console.print(f"[green]Connected.[/green] Subscribing to {char_uuid}...")
 
-        received = []
+        count = 0
 
         def callback(sender, data):
+            nonlocal count
             hex_str = data.hex(" ")
             console.print(f"[cyan]<< {hex_str}[/cyan]")
-            received.append(data)
+            count += 1
 
         await client.start_notify(char_uuid, callback)
         console.print("[dim]Listening for notifications (Ctrl+C to stop)...[/dim]")
@@ -82,7 +83,7 @@ async def _read_notify(name: str, char_uuid: str, timeout: float) -> None:
             pass
         finally:
             await client.stop_notify(char_uuid)
-            console.print(f"[dim]Received {len(received)} notification(s).[/dim]")
+            console.print(f"[dim]Received {count} notification(s).[/dim]")
 
 
 def _resolve_device_name(name: str | None) -> str:
@@ -94,7 +95,7 @@ def _resolve_device_name(name: str | None) -> str:
         ble_cfg = getattr(global_config, "ble", None)
         if isinstance(ble_cfg, dict) and ble_cfg.get("device_name"):
             return ble_cfg["device_name"]
-    except Exception:  # noqa: BLE001
+    except (ImportError, AttributeError, KeyError, TypeError):
         pass
     console.print("[red]No device name specified.[/red]")
     console.print("[dim]Use --name or set ble.device_name in global_config.yaml[/dim]")

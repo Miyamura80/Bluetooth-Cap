@@ -10,7 +10,7 @@ CLI for interfacing with a BLE LED matrix cap (`LED_BLE_62F7C880`). Uses `bleak`
 - **Device name**: `LED_BLE_62F7C880` (configurable in `common/global_config.yaml` under `ble.device_name`)
 - **Service 0x00FA**: char `fa02` (write), char `fa03` (notify) - primary data channel
 - **Service 0xAE00**: char `ae01` (write), char `ae02` (notify) - secondary channel
-- Protocol is not yet reverse-engineered; commands under `commands/` currently do scanning and service enumeration only.
+- Protocol is not yet reverse-engineered; commands under `commands/` provide scanning, service enumeration, and notification subscription.
 
 ## Common Commands
 
