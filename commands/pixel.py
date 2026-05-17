@@ -41,15 +41,16 @@ async def _set_pixel(
         console.print(f"[yellow]>> {enter.hex(' ')}[/yellow]  (enter DIY mode)")
         await write_command(client, enter)
 
-        pixel = proto.set_pixel(x, y, r, g, b)
-        console.print(
-            f"[yellow]>> {pixel.hex(' ')}[/yellow]  (pixel ({x},{y}) = #{r:02x}{g:02x}{b:02x})"
-        )
-        await write_command(client, pixel)
-
-        exit_cmd = proto.diy_mode(enable=False)
-        console.print(f"[yellow]>> {exit_cmd.hex(' ')}[/yellow]  (exit DIY mode)")
-        await write_command(client, exit_cmd)
+        try:
+            pixel = proto.set_pixel(x, y, r, g, b)
+            console.print(
+                f"[yellow]>> {pixel.hex(' ')}[/yellow]  (pixel ({x},{y}) = #{r:02x}{g:02x}{b:02x})"
+            )
+            await write_command(client, pixel)
+        finally:
+            exit_cmd = proto.diy_mode(enable=False)
+            console.print(f"[yellow]>> {exit_cmd.hex(' ')}[/yellow]  (exit DIY mode)")
+            await write_command(client, exit_cmd)
 
         console.print(f"[green]Pixel set at ({x},{y}).[/green]")
 

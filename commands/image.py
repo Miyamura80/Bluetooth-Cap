@@ -62,6 +62,8 @@ def _prepare_gif(path: Path, width: int, height: int) -> bytes:
         append_images=frames[1:],
         duration=durations,
         loop=0,
+        disposal=2,
+        optimize=False,
     )
     return buf.getvalue()
 

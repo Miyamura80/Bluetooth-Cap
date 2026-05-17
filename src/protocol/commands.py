@@ -6,7 +6,7 @@ All multi-byte fields are little-endian.
 """
 
 import struct
-from datetime import UTC, datetime
+from datetime import datetime
 from zlib import crc32
 
 WRITE_UUID = "0000fa02-0000-1000-8000-00805f9b34fb"
@@ -43,7 +43,7 @@ def brightness(level: int) -> bytes:
 
 def query_device_info() -> bytes:
     """Send time sync which also triggers a device info response."""
-    now = datetime.now(UTC)
+    now = datetime.now()  # noqa: DTZ005 - local time is correct, the cap has no timezone
     return make_payload(CMD_SET_TIME, bytes([now.hour, now.minute, now.second, 0x00]))
 
 
