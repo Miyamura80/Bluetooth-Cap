@@ -40,7 +40,7 @@ class TestCLI(TestTemplate):
         assert result.exit_code == 0
 
     def test_config_get(self):
-        result = runner.invoke(app, ["config", "get", "llm_config.cache_enabled"])
+        result = runner.invoke(app, ["config", "get", "logging.verbose"])
         assert result.exit_code == 0
 
     def test_config_get_nonexistent(self):

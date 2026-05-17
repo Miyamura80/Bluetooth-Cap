@@ -15,30 +15,6 @@ class ExampleParent(BaseModel):
     example_child: str
 
 
-class DefaultLlm(BaseModel):
-    """Default LLM configuration."""
-
-    default_model: str
-    fallback_model: str | None = None
-    default_temperature: float
-    default_max_tokens: int
-
-
-class RetryConfig(BaseModel):
-    """Retry configuration for LLM requests."""
-
-    max_attempts: int
-    min_wait_seconds: int
-    max_wait_seconds: int
-
-
-class LlmConfig(BaseModel):
-    """LLM configuration including caching and retry settings."""
-
-    cache_enabled: bool
-    retry: RetryConfig
-
-
 class LoggingLocationConfig(BaseModel):
     """Location information display configuration for logging."""
 

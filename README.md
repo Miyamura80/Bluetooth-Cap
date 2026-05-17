@@ -100,3 +100,12 @@ ble:
 - [Typer](https://typer.tiangolo.com/) - CLI framework
 - [Rich](https://rich.readthedocs.io/) - Terminal formatting
 - [uv](https://docs.astral.sh/uv/) - Python package manager
+- [prek](https://github.com/j178/prek) - Rust-based pre-commit framework
+
+## About the Core Contributors
+
+<a href="https://github.com/Miyamura80/Bluetooth-Cap/graphs/contributors">
+  <img src="https://contrib.rocks/image?repo=Miyamura80/Bluetooth-Cap" />
+</a>
+
+Made with [contrib.rocks](https://contrib.rocks).

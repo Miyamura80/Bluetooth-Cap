@@ -1,7 +1,5 @@
 """Interactive onboarding CLI for project setup."""
 
-import asyncio
-import os
 import random
 import re
 import shutil
@@ -1063,90 +1061,10 @@ def hooks() -> None:
         )
 
 
-def _check_gemini_key() -> bool:
-    """Check if GEMINI_API_KEY is available in .env or environment."""
-    if os.environ.get("GEMINI_API_KEY"):
-        return True
-    env_path = PROJECT_ROOT / ".env"
-    if env_path.exists():
-        for line in env_path.read_text().splitlines():
-            line = line.strip()
-            if line.startswith("GEMINI_API_KEY=") and not line.startswith("#"):
-                value = line.split("=", 1)[1].strip()
-                return _has_real_value(value)
-    return False
-
-
-def _run_media_generation(choice: str, project_name: str, theme: str) -> list[str]:
-    """Run the selected media generation and return list of generated file paths."""
-    # Import here to avoid requiring GEMINI_API_KEY for non-media commands
-    from init.generate_banner import generate_banner as gen_banner
-    from init.generate_logo import generate_logo as gen_logo
-
-    generated_files: list[str] = []
-
-    if choice in ("Banner only", "Both"):
-        with console.status("[yellow]Generating banner...[/yellow]"):
-            asyncio.run(gen_banner(title=project_name, theme=theme))
-        banner_path = PROJECT_ROOT / "media" / "banner.png"
-        generated_files.append(str(banner_path))
-        rprint(f"[green]✓[/green] Banner saved to {banner_path}")
-
-    if choice in ("Logo only", "Both"):
-        with console.status("[yellow]Generating logo...[/yellow]"):
-            asyncio.run(gen_logo(project_name=project_name, theme=theme))
-        logo_dir = PROJECT_ROOT / "docs" / "public"
-        for name in (
-            "logo-light.png",
-            "logo-dark.png",
-            "icon-light.png",
-            "icon-dark.png",
-            "favicon.ico",
-        ):
-            generated_files.append(str(logo_dir / name))
-        rprint(f"[green]✓[/green] Logo assets saved to {logo_dir}")
-
-    return generated_files
-
-
 @app.command()
 def media() -> None:
-    """Step 7: Generate banner and logo assets."""
-    if not _check_gemini_key():
-        rprint("[yellow]⚠ GEMINI_API_KEY is not configured.[/yellow]")
-        skip = questionary.confirm("Skip media generation?", default=True).ask()
-        if skip is None:
-            raise typer.Abort()
-        if skip:
-            rprint("[yellow]Media generation skipped.[/yellow]")
-            return
-
-    project_name = _read_pyproject_name()
-
-    rprint()
-    theme = questionary.text(
-        "Describe the visual theme/style for your project assets:",
-        default="modern, clean, minimalist tech aesthetic",
-    ).ask()
-    if theme is None:
-        raise typer.Abort()
-
-    choice = questionary.select(
-        "What would you like to generate?",
-        choices=["Both", "Banner only", "Logo only", "Skip"],
-        default="Both",
-    ).ask()
-    if choice is None:
-        raise typer.Abort()
-
-    if choice == "Skip":
-        rprint("[yellow]Media generation skipped.[/yellow]")
-        return
-
-    generated_files = _run_media_generation(choice, project_name, theme)
-    rprint("\n[green]Generated files:[/green]")
-    for f in generated_files:
-        rprint(f"  {f}")
+    """Step 7: Generate banner and logo assets (removed)."""
+    rprint("[yellow]Media generation has been removed from this project.[/yellow]")
 
 
 _JULES_WORKFLOWS: list[tuple[str, str]] = [
