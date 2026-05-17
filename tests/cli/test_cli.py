@@ -28,10 +28,45 @@ class TestCLI(TestTemplate):
         assert result.exit_code == 0
         assert "DRY RUN" in result.output
 
-    def test_device_info_dry_run(self):
+    def test_info_dry_run(self):
+        result = runner.invoke(app, ["--dry-run", "info", "--name", "LED_BLE_TEST"])
+        assert result.exit_code == 0
+        assert "DRY RUN" in result.output
+
+    def test_power_dry_run(self):
         result = runner.invoke(
-            app, ["--dry-run", "device", "info", "--name", "LED_BLE_TEST"]
+            app, ["--dry-run", "power", "on", "--name", "LED_BLE_TEST"]
         )
+        assert result.exit_code == 0
+        assert "DRY RUN" in result.output
+
+    def test_brightness_dry_run(self):
+        result = runner.invoke(
+            app, ["--dry-run", "brightness", "50", "--name", "LED_BLE_TEST"]
+        )
+        assert result.exit_code == 0
+        assert "DRY RUN" in result.output
+
+    def test_send_dry_run(self):
+        result = runner.invoke(
+            app,
+            [
+                "--dry-run",
+                "send",
+                "05",
+                "00",
+                "07",
+                "01",
+                "01",
+                "--name",
+                "LED_BLE_TEST",
+            ],
+        )
+        assert result.exit_code == 0
+        assert "DRY RUN" in result.output
+
+    def test_probe_dry_run(self):
+        result = runner.invoke(app, ["--dry-run", "probe", "--name", "LED_BLE_TEST"])
         assert result.exit_code == 0
         assert "DRY RUN" in result.output
 

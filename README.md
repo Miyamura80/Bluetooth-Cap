@@ -46,7 +46,10 @@ bash install-skills.sh && rm install-skills.sh
 ```bash
 uv sync                                              # install deps (includes bleak for BLE)
 uv run bluecap scan                                  # find nearby LED_BLE devices
-uv run bluecap device info --name LED_BLE_62F7C880   # connect and inspect BLE services
+uv run bluecap info --name LED_BLE_62F7C880          # connect and inspect BLE services
+uv run bluecap probe                                 # detect device type and LED dimensions
+uv run bluecap power on                              # power on the cap
+uv run bluecap brightness 50                         # set brightness to 50%
 ```
 
 ## Commands
@@ -54,8 +57,12 @@ uv run bluecap device info --name LED_BLE_62F7C880   # connect and inspect BLE s
 | Command | Description |
 |---------|-------------|
 | `bluecap scan` | Scan for nearby BLE LED cap devices |
-| `bluecap device info` | Connect to cap and display service/characteristic tree |
-| `bluecap device notify <uuid>` | Subscribe to notifications from a characteristic |
+| `bluecap info` | Connect to cap and display service/characteristic tree |
+| `bluecap probe` | Query device type and LED matrix dimensions |
+| `bluecap send <hex>` | Send raw bytes to cap (reverse engineering tool) |
+| `bluecap power on\|off` | Turn the LED cap on or off |
+| `bluecap brightness <1-100>` | Set LED brightness |
+| `bluecap notify <uuid>` | Subscribe to notifications from a characteristic |
 | `bluecap doctor` | Check project environment health |
 | `bluecap config show` | Show current configuration |
 
@@ -68,23 +75,44 @@ uv run bluecap scan --all              # show all BLE devices
 uv run bluecap scan --prefix "LED"     # custom name prefix filter
 ```
 
-### Device
+### Device Control
 
 ```bash
-uv run bluecap device info --name LED_BLE_62F7C880   # connect to a specific device
-uv run bluecap device notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
+uv run bluecap info                    # connect and show BLE service tree
+uv run bluecap probe                   # detect device type and matrix size
+uv run bluecap power on                # turn on
+uv run bluecap power off               # turn off
+uv run bluecap brightness 75           # set brightness to 75%
 ```
 
-## Device Info
+### Reverse Engineering
 
-Devices advertise as `LED_BLE_<ID>` (e.g. `LED_BLE_62F7C880`).
+```bash
+uv run bluecap send 05 00 07 01 01     # send raw bytes (power on command)
+uv run bluecap send 05 00 04 80 32     # send raw bytes (brightness 50%)
+uv run bluecap send --no-listen AA BB  # send without listening for response
+uv run bluecap notify 0000fa03-0000-1000-8000-00805f9b34fb  # listen for notifications
+```
+
+## Protocol
+
+Uses the **iPIXEL Color** protocol. All commands are written to characteristic `fa02`, responses come back on `fa03`.
+
+Command format: `[LEN_LO][LEN_HI][CMD_LO][CMD_HI][DATA...]` (little-endian).
 
 | Service UUID | Characteristics | Description |
 |---|---|---|
-| `000000fa-0000-1000-8000-00805f9b34fb` | `fa02` (write), `fa03` (notify) | Primary data channel |
-| `0000ae00-0000-1000-8000-00805f9b34fb` | `ae01` (write), `ae02` (notify) | Secondary channel |
+| `000000fa-0000-1000-8000-00805f9b34fb` | `fa02` (write), `fa03` (notify) | Primary data channel (iPIXEL protocol) |
+| `0000ae00-0000-1000-8000-00805f9b34fb` | `ae01` (write), `ae02` (notify) | Jieli RCSP channel (auth/OTA) |
 
-Protocol details TBD - reverse engineering not yet started.
+| Command | Bytes | Description |
+|---|---|---|
+| Power on | `05 00 07 01 01` | Turn display on |
+| Power off | `05 00 07 01 00` | Turn display off |
+| Brightness 50% | `05 00 04 80 32` | Set brightness (1-100) |
+| Device info | `08 00 01 80 HH MM SS 00` | Query device type (also syncs clock) |
+| Default mode | `04 00 03 80` | Return to default display |
+| Flip display | `05 00 06 80 01` | Flip display upside down |
 
 ## Configuration
 
@@ -102,10 +130,13 @@ ble:
 - [x] BLE device scanning
 - [x] Service/characteristic enumeration
 - [x] Notification subscription
-- [ ] Protocol reverse engineering (packet capture & analysis)
-- [ ] Display text/images on LED matrix
-- [ ] Animation support
-- [ ] Brightness/speed control
+- [x] iPIXEL protocol implementation (power, brightness, device info)
+- [x] Raw byte sending for reverse engineering
+- [x] Device type detection and matrix dimension query
+- [ ] Display text on LED matrix
+- [ ] Display images (PNG/GIF) on LED matrix
+- [ ] Animation and clock mode support
+- [ ] DIY pixel drawing mode
 
 ## Credits
 

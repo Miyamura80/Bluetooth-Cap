@@ -8,9 +8,9 @@ CLI for interfacing with a BLE LED matrix cap (`LED_BLE_62F7C880`). Uses `bleak`
 ## BLE Device
 
 - **Device name**: `LED_BLE_62F7C880` (configurable in `common/global_config.yaml` under `ble.device_name`)
-- **Service 0x00FA**: char `fa02` (write), char `fa03` (notify) - primary data channel
-- **Service 0xAE00**: char `ae01` (write), char `ae02` (notify) - secondary channel
-- Protocol is not yet reverse-engineered; commands under `commands/` provide scanning, service enumeration, and notification subscription.
+- **Service 0x00FA**: char `fa02` (write), char `fa03` (notify) - primary data channel (iPIXEL protocol)
+- **Service 0xAE00**: char `ae01` (write), char `ae02` (notify) - Jieli RCSP (auth/OTA, not used for display control)
+- **Protocol**: iPIXEL Color. Command format: `[LEN_LO][LEN_HI][CMD_LO][CMD_HI][DATA...]` (all LE). Encoding in `src/protocol/commands.py`.
 
 ## Common Commands
 
@@ -20,12 +20,17 @@ make test           # Run pytest
 make fmt            # Format with ruff + jq
 uv sync             # Install deps
 uv run bluecap scan           # Scan for LED_BLE devices
-uv run bluecap device info    # Connect and show services
+uv run bluecap info           # Connect and show services
+uv run bluecap probe          # Detect device type and LED dimensions
+uv run bluecap power on       # Power on
+uv run bluecap brightness 50  # Set brightness
+uv run bluecap send AA BB CC  # Send raw bytes (RE tool)
 ```
 
 ## Architecture
 
-- **commands/** - Auto-discovered CLI commands (`scan.py`, `device.py`, `config.py`, `doctor.py`)
+- **commands/** - Auto-discovered CLI commands (flat: `scan.py`, `info.py`, `probe.py`, `send.py`, `power.py`, `brightness.py`, etc.)
+- **src/protocol/** - iPIXEL BLE protocol (command encoding, connection management, device type detection)
 - **common/** - Pydantic-settings config (`global_config.yaml`, `.env`)
 - **src/cli/** - CLI framework (state, telemetry, scaffold, security, completions)
 - **src/utils/** - Shared utilities (output, errors, theme, progress)
@@ -78,4 +83,5 @@ Structure as: `init()` -> `continue(id)` -> `cleanup(id)`
 
 ## Deprecated
 
-- Don't use `datetime.utcnow()` - use `datetime.now(timezone.utc)`
+- Don't use `datetime.utcnow()` - use `datetime.now(UTC)`
+- Bleak 3.x: `start_notify` callback signature is `(BleakGATTCharacteristic, bytearray)`, not `(int, bytearray)`
