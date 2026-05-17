@@ -42,9 +42,33 @@ from common import global_config
 global_config.ble.device_name  # "LED_BLE_62F7C880"
 ```
 
+## Logging
+
+```python
+from loguru import logger as log
+from src.utils.logging_config import setup_logging
+
+setup_logging()
+log.debug("detailed diagnostic information")
+log.info("general informational message")
+log.warning("warning message for potentially harmful situations")
+log.error("error message for error events")
+```
+
 ## Commit Message Convention
 
-Emoji prefixes (multiple = 5+ files): 🏗️ initial, 🔨 feature, 🐛 bugfix, ✨ formatting, ✅ feature+tests, ⚙️ config, 💽 DB.
+Emoji prefixes (multiple = 5+ files): 🏗️ initial, 🔨 feature, 🐛 bugfix, ✨ formatting, ✅ feature+tests, ⚙️ config.
+
+## Long-Running Code Pattern
+
+Structure as: `init()` -> `continue(id)` -> `cleanup(id)`
+- Keep state serializable
+- Use descriptive IDs (runId, taskId)
+- Handle rate limits, timeouts, retries at system boundaries
+
+## Subagents
+
+- Folder-size CI failure -> spawn subagent `.claude/agents/folder-refactor-advisor.md`.
 
 ## Git Workflow
 

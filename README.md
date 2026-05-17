@@ -28,6 +28,19 @@ A Python CLI for scanning, connecting to, and (eventually) controlling a [BLE LE
 
 Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
 
+## Agent Prompt
+
+> Copy and paste this into your AI coding agent (Claude Code, Cursor, Copilot, etc.) to install:
+
+```text
+Install the CLI and download the usage skill:
+
+uv pip install bluetooth-cap
+
+curl -fsSL https://raw.githubusercontent.com/Miyamura80/Bluetooth-Cap/main/scripts/install-skills.sh -o install-skills.sh
+bash install-skills.sh && rm install-skills.sh
+```
+
 ## Quick Start
 
 ```bash
