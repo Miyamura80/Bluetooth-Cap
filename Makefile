@@ -40,9 +40,6 @@ help: ## Show this help message
 ########################################################
 
 ### Initialization
-.PHONY: onboard
-onboard: check_uv ## Run interactive onboarding CLI
-	@$(PYTHON) onboard.py
 
 
 ########################################################
