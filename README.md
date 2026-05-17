@@ -12,8 +12,7 @@
   <a href="#quick-start">Quick Start</a> •
   <a href="#commands">Commands</a> •
   <a href="#protocol">Protocol</a> •
-  <a href="#configuration">Configuration</a> •
-  <a href="#roadmap">Roadmap</a>
+  <a href="#configuration">Configuration</a>
 </p>
 
 <p align="center">
@@ -142,22 +141,6 @@ ble:
   scan_timeout: 10.0
   device_prefix: "LED_BLE"
 ```
-
-## Roadmap
-
-- [x] BLE device scanning
-- [x] Service/characteristic enumeration
-- [x] Notification subscription
-- [x] iPIXEL protocol implementation (power, brightness, device info)
-- [x] Raw byte sending for reverse engineering
-- [x] Device type detection and matrix dimension query
-- [x] Display text on LED matrix (static and scrolling)
-- [x] Display images (PNG/GIF) on LED matrix with windowed transfer
-- [x] Clock mode (8 styles, 12h/24h, date toggle)
-- [x] DIY pixel drawing mode
-- [ ] Device auto-reconnection with retry logic
-- [ ] Save device address to config for faster connections
-- [ ] Investigate Jieli RCSP service (firmware version query)
 
 ## Credits
 
