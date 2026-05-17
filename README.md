@@ -11,7 +11,7 @@
 <p align="center">
   <a href="#quick-start">Quick Start</a> •
   <a href="#commands">Commands</a> •
-  <a href="#device-info">Device Info</a> •
+  <a href="#protocol">Protocol</a> •
   <a href="#configuration">Configuration</a> •
   <a href="#roadmap">Roadmap</a>
 </p>
@@ -24,9 +24,7 @@
 
 ---
 
-A Python CLI for scanning, connecting to, and (eventually) controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
-
-Currently in scaffolding phase - protocol reverse engineering is planned but not yet implemented.
+A Python CLI for controlling a [BLE LED matrix cap](https://www.amazon.co.uk/LIOVODE-Christmas-Birthday-Advertising-Campaign/dp/B0G2S4H849?th=1) (32x16 LED, iPIXEL Color protocol). The cap advertises as `LED_BLE_*` over Bluetooth Low Energy.
 
 ## Agent Prompt
 
@@ -59,10 +57,18 @@ uv run bluecap brightness 50                         # set brightness to 50%
 | `bluecap scan` | Scan for nearby BLE LED cap devices |
 | `bluecap info` | Connect to cap and display service/characteristic tree |
 | `bluecap probe` | Query device type and LED matrix dimensions |
-| `bluecap send <hex>` | Send raw bytes to cap (reverse engineering tool) |
 | `bluecap power on\|off` | Turn the LED cap on or off |
 | `bluecap brightness <1-100>` | Set LED brightness |
-| `bluecap notify <uuid>` | Subscribe to notifications from a characteristic |
+| `bluecap text <msg>` | Display static or scrolling text |
+| `bluecap image <file>` | Display a PNG, JPEG, or GIF animation |
+| `bluecap clock` | Display a clock (multiple styles, 12h/24h) |
+| `bluecap flip` | Flip the display upside down |
+| `bluecap screen <1-9>` | Select a display buffer slot |
+| `bluecap erase <slots>` | Erase display buffer slots |
+| `bluecap pixel <x> <y>` | Set a single pixel in DIY mode |
+| `bluecap default` | Return to default display mode |
+| `bluecap send <hex>` | Send raw bytes (reverse engineering tool) |
+| `bluecap notify <uuid>` | Subscribe to BLE notifications |
 | `bluecap doctor` | Check project environment health |
 | `bluecap config show` | Show current configuration |
 
@@ -83,6 +89,18 @@ uv run bluecap probe                   # detect device type and matrix size
 uv run bluecap power on                # turn on
 uv run bluecap power off               # turn off
 uv run bluecap brightness 75           # set brightness to 75%
+```
+
+### Display
+
+```bash
+uv run bluecap text "Hello"                        # static text
+uv run bluecap text "Hello World" --scroll          # scrolling text (GIF-based)
+uv run bluecap text "Alert" --color ff0000          # red text
+uv run bluecap image photo.png                      # display an image (resized to 32x16)
+uv run bluecap image animation.gif                  # play a GIF animation
+uv run bluecap clock --style 3 --24h                # clock display, style 3
+uv run bluecap pixel 5 8 --color 00ff00             # set pixel (5,8) to green
 ```
 
 ### Reverse Engineering
@@ -133,10 +151,13 @@ ble:
 - [x] iPIXEL protocol implementation (power, brightness, device info)
 - [x] Raw byte sending for reverse engineering
 - [x] Device type detection and matrix dimension query
-- [ ] Display text on LED matrix
-- [ ] Display images (PNG/GIF) on LED matrix
-- [ ] Animation and clock mode support
-- [ ] DIY pixel drawing mode
+- [x] Display text on LED matrix (static and scrolling)
+- [x] Display images (PNG/GIF) on LED matrix with windowed transfer
+- [x] Clock mode (8 styles, 12h/24h, date toggle)
+- [x] DIY pixel drawing mode
+- [ ] Device auto-reconnection with retry logic
+- [ ] Save device address to config for faster connections
+- [ ] Investigate Jieli RCSP service (firmware version query)
 
 ## Credits
 
