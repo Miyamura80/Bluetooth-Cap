@@ -23,7 +23,7 @@ dependencies = [
     "python-dotenv>=1.2.1",
     "human-id>=0.2.0",
     "import-linter>=2.1.1",
-    "pytest>=8.3.4",
+    "pytest>=9.0.3",
     "pytest-xdist>=3.6.1",
     "termcolor>=2.5.0",
     "loguru>=0.7.3",
@@ -40,11 +40,11 @@ dependencies = [
     "openfeature-sdk>=0.7.1",
     "scrubadub>=2.0.1",
     "pydantic>=2.10.6",
-    "numpy>=2.2.2",
+    "numpy>=2.4.5",
     "typer",
     "questionary",
     "rich>=14.3.1",
-    "packaging>=24.0",
+    "packaging>=26.2",
     "keyring>=25.0.0",
     "bleak>=3.0.2",
     "pilmoji>=2.0.5",
@@ -154,6 +154,6 @@ show_missing = true
 
 [dependency-groups]
 dev = [
-    "pre-commit>=4.5.1",
+    "pre-commit>=4.6.0",
     "pytest-check-links>=0.9.1",
 ]
