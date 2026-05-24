@@ -47,6 +47,11 @@ dependencies = [
     "packaging>=24.0",
     "keyring>=25.0.0",
     "bleak>=3.0.2",
+    "pilmoji>=2.0.5",
+    "sounddevice>=0.5.5",
+    "openai>=1.0.0",
+    "groq>=1.2.0",
+    "assemblyai>=0.64.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -126,7 +131,8 @@ exclude = [
     "src/cli/",
     "src/protocol/",
     "cli.py",
-    "templates/"
+    "templates/",
+    "extensions/"
 ]
 
 [tool.file_length]
