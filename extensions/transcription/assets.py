@@ -51,8 +51,30 @@ FONT: dict[str, tuple[int, list[int]]] = {
 }
 
 Color = tuple[int, int, int]
+_F = 0x7F
+_A = [_F] * 7
 
-# 7x7 bitmap icons for word macros - (width, rows, color)
+# -- Icon helpers --
+
+
+def _h_tri(c1: Color, c2: Color, c3: Color) -> list[tuple[int, list[int], Color]]:
+    return [
+        (7, [_F, _F, 0, 0, 0, 0, 0], c1),
+        (7, [0, 0, _F, _F, _F, 0, 0], c2),
+        (7, [0, 0, 0, 0, 0, _F, _F], c3),
+    ]
+
+
+def _v_tri(c1: Color, c2: Color, c3: Color) -> list[tuple[int, list[int], Color]]:
+    return [(7, [0x60] * 7, c1), (7, [0x1C] * 7, c2), (7, [0x03] * 7, c3)]
+
+
+def _arrow(bmp: list[int]) -> list[tuple[int, list[int], Color]]:
+    return [(7, list(_A), (40, 80, 200)), (7, bmp, (255, 255, 255))]
+
+
+# -- Icons (single-color) --
+
 ICONS: dict[str, tuple[int, list[int], Color]] = {
     "heart": (7, [0x00, 0x36, 0x7F, 0x7F, 0x3E, 0x1C, 0x08], (255, 0, 40)),
     "wheat": (7, [0x22, 0x77, 0x22, 0x14, 0x14, 0x08, 0x08], (255, 200, 0)),
@@ -67,16 +89,23 @@ ICONS: dict[str, tuple[int, list[int], Color]] = {
     "bolt": (7, [0x1C, 0x18, 0x38, 0x7E, 0x0E, 0x0C, 0x18], (255, 255, 100)),
     "rain": (7, [0x2A, 0x00, 0x54, 0x00, 0x2A, 0x00, 0x54], (0, 140, 255)),
     "text": (7, [0x3E, 0x7F, 0x7F, 0x7F, 0x3E, 0x10, 0x20], (0, 200, 80)),
-    "c_red": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (255, 0, 0)),
-    "c_blue": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (0, 0, 255)),
-    "c_green": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (0, 255, 0)),
-    "c_yellow": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (255, 255, 0)),
-    "c_orange": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (255, 165, 0)),
-    "c_purple": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (128, 0, 255)),
-    "c_pink": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (255, 100, 200)),
-    "c_white": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (255, 255, 255)),
-    "c_cyan": (5, [0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F, 0x1F], (0, 255, 255)),
 }
+
+_SOLID = [0x1F] * 7
+for _name, _color in {
+    "c_red": (255, 0, 0),
+    "c_blue": (0, 0, 255),
+    "c_green": (0, 255, 0),
+    "c_yellow": (255, 255, 0),
+    "c_orange": (255, 165, 0),
+    "c_purple": (128, 0, 255),
+    "c_pink": (255, 100, 200),
+    "c_white": (255, 255, 255),
+    "c_cyan": (0, 255, 255),
+}.items():
+    ICONS[_name] = (5, list(_SOLID), _color)
+
+# -- Layered icons (multi-color) --
 
 LAYERED_ICONS: dict[str, list[tuple[int, list[int], Color]]] = {
     "robot": [
@@ -85,9 +114,7 @@ LAYERED_ICONS: dict[str, list[tuple[int, list[int], Color]]] = {
         (5, [0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00], (217, 74, 74)),
         (5, [0x00, 0x00, 0x00, 0x0A, 0x00, 0x00, 0x00], (255, 255, 0)),
     ],
-    "email": [
-        (7, [0x7F, 0x63, 0x55, 0x49, 0x41, 0x41, 0x7F], (70, 130, 220)),
-    ],
+    "email": [(7, [0x7F, 0x63, 0x55, 0x49, 0x41, 0x41, 0x7F], (70, 130, 220))],
     "sickle": [
         (5, [0x0F, 0x11, 0x01, 0x00, 0x00, 0x00, 0x00], (154, 160, 166)),
         (5, [0x00, 0x00, 0x00, 0x01, 0x01, 0x01, 0x01], (139, 90, 43)),
@@ -112,200 +139,109 @@ LAYERED_ICONS: dict[str, list[tuple[int, list[int], Color]]] = {
         (7, [0x00, 0x08, 0x1C, 0x08, 0x00, 0x00, 0x00], (170, 215, 255)),
         (7, [0x1C, 0x22, 0x41, 0x22, 0x1C, 0x04, 0x02], (220, 180, 80)),
     ],
-    "arrow_up": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (40, 80, 200)),
-        (7, [0x08, 0x1C, 0x3E, 0x08, 0x08, 0x08, 0x00], (255, 255, 255)),
-    ],
-    "arrow_down": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (40, 80, 200)),
-        (7, [0x00, 0x08, 0x08, 0x08, 0x3E, 0x1C, 0x08], (255, 255, 255)),
-    ],
-    "arrow_left": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (40, 80, 200)),
-        (7, [0x00, 0x10, 0x20, 0x3E, 0x20, 0x10, 0x00], (255, 255, 255)),
-    ],
-    "arrow_right": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (40, 80, 200)),
-        (7, [0x00, 0x04, 0x02, 0x3E, 0x02, 0x04, 0x00], (255, 255, 255)),
-    ],
+    "arrow_up": _arrow([0x08, 0x1C, 0x3E, 0x08, 0x08, 0x08, 0x00]),
+    "arrow_down": _arrow([0x00, 0x08, 0x08, 0x08, 0x3E, 0x1C, 0x08]),
+    "arrow_left": _arrow([0x00, 0x10, 0x20, 0x3E, 0x20, 0x10, 0x00]),
+    "arrow_right": _arrow([0x00, 0x04, 0x02, 0x3E, 0x02, 0x04, 0x00]),
     "rainbow": [
-        (7, [0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40], (255, 0, 0)),
-        (7, [0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20], (255, 127, 0)),
-        (7, [0x10, 0x10, 0x10, 0x10, 0x10, 0x10, 0x10], (255, 255, 0)),
-        (7, [0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08], (0, 255, 0)),
-        (7, [0x04, 0x04, 0x04, 0x04, 0x04, 0x04, 0x04], (0, 100, 255)),
-        (7, [0x02, 0x02, 0x02, 0x02, 0x02, 0x02, 0x02], (75, 0, 130)),
-        (7, [0x01, 0x01, 0x01, 0x01, 0x01, 0x01, 0x01], (148, 0, 211)),
+        (7, [0x40] * 7, (255, 0, 0)),
+        (7, [0x20] * 7, (255, 127, 0)),
+        (7, [0x10] * 7, (255, 255, 0)),
+        (7, [0x08] * 7, (0, 255, 0)),
+        (7, [0x04] * 7, (0, 100, 255)),
+        (7, [0x02] * 7, (75, 0, 130)),
+        (7, [0x01] * 7, (148, 0, 211)),
     ],
+    # -- Flags --
     "flag_jp": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (240, 240, 240)),
+        (7, list(_A), (240, 240, 240)),
         (7, [0x00, 0x08, 0x1C, 0x1C, 0x1C, 0x08, 0x00], (188, 0, 45)),
     ],
     "flag_ua": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x00, 0x00, 0x00], (0, 87, 183)),
-        (7, [0x00, 0x00, 0x00, 0x00, 0x7F, 0x7F, 0x7F], (255, 215, 0)),
+        (7, [_F, _F, _F, _F, 0, 0, 0], (0, 87, 183)),
+        (7, [0, 0, 0, 0, _F, _F, _F], (255, 215, 0)),
     ],
-    "flag_ru": [
-        (7, [0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00], (240, 240, 240)),
-        (7, [0x00, 0x00, 0x7F, 0x7F, 0x7F, 0x00, 0x00], (0, 57, 166)),
-        (7, [0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0x7F], (213, 43, 30)),
-    ],
-    "flag_bg": [
-        (7, [0x7F, 0x7F, 0x00, 0x00, 0x00, 0x00, 0x00], (240, 240, 240)),
-        (7, [0x00, 0x00, 0x7F, 0x7F, 0x7F, 0x00, 0x00], (0, 150, 68)),
-        (7, [0x00, 0x00, 0x00, 0x00, 0x00, 0x7F, 0x7F], (214, 38, 18)),
-    ],
+    "flag_ru": _h_tri((240, 240, 240), (0, 57, 166), (213, 43, 30)),
+    "flag_bg": _h_tri((240, 240, 240), (0, 150, 68), (214, 38, 18)),
     "flag_gr": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (13, 94, 175)),
-        (7, [0x20, 0x7F, 0x20, 0x7F, 0x00, 0x7F, 0x00], (240, 240, 240)),
+        (7, list(_A), (13, 94, 175)),
+        (7, [0x20, _F, 0x20, _F, 0, _F, 0], (240, 240, 240)),
     ],
     "flag_gb": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (0, 36, 125)),
+        (7, list(_A), (0, 36, 125)),
         (7, [0x41, 0x22, 0x14, 0x08, 0x14, 0x22, 0x41], (240, 240, 240)),
-        (7, [0x08, 0x08, 0x08, 0x7F, 0x08, 0x08, 0x08], (200, 16, 46)),
+        (7, [0x08, 0x08, 0x08, _F, 0x08, 0x08, 0x08], (200, 16, 46)),
     ],
     "flag_us": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (178, 34, 52)),
-        (7, [0x00, 0x7F, 0x00, 0x7F, 0x00, 0x7F, 0x00], (240, 240, 240)),
-        (7, [0x78, 0x78, 0x78, 0x78, 0x00, 0x00, 0x00], (0, 56, 130)),
-        (7, [0x50, 0x28, 0x50, 0x28, 0x00, 0x00, 0x00], (240, 240, 240)),
+        (7, list(_A), (178, 34, 52)),
+        (7, [0, _F, 0, _F, 0, _F, 0], (240, 240, 240)),
+        (7, [0x78, 0x78, 0x78, 0x78, 0, 0, 0], (0, 56, 130)),
+        (7, [0x50, 0x28, 0x50, 0x28, 0, 0, 0], (240, 240, 240)),
     ],
-    "flag_ro": [
-        (7, [0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60], (0, 43, 127)),
-        (7, [0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C], (252, 209, 22)),
-        (7, [0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03], (206, 17, 38)),
-    ],
-    "flag_it": [
-        (7, [0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60], (0, 146, 70)),
-        (7, [0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C], (240, 240, 240)),
-        (7, [0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03], (206, 43, 55)),
-    ],
-    "flag_fr": [
-        (7, [0x60, 0x60, 0x60, 0x60, 0x60, 0x60, 0x60], (0, 35, 149)),
-        (7, [0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C, 0x1C], (240, 240, 240)),
-        (7, [0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03], (237, 41, 57)),
-    ],
+    "flag_ro": _v_tri((0, 43, 127), (252, 209, 22), (206, 17, 38)),
+    "flag_it": _v_tri((0, 146, 70), (240, 240, 240), (206, 43, 55)),
+    "flag_fr": _v_tri((0, 35, 149), (240, 240, 240), (237, 41, 57)),
     "flag_es": [
-        (7, [0x7F, 0x7F, 0x00, 0x00, 0x00, 0x7F, 0x7F], (170, 21, 27)),
-        (7, [0x00, 0x00, 0x7F, 0x7F, 0x7F, 0x00, 0x00], (241, 191, 0)),
+        (7, [_F, _F, 0, 0, 0, _F, _F], (170, 21, 27)),
+        (7, [0, 0, _F, _F, _F, 0, 0], (241, 191, 0)),
     ],
     "flag_cn": [
-        (7, [0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F, 0x7F], (222, 41, 16)),
-        (7, [0x08, 0x24, 0x70, 0x24, 0x08, 0x00, 0x00], (255, 222, 0)),
+        (7, list(_A), (222, 41, 16)),
+        (7, [0x08, 0x24, 0x70, 0x24, 0x08, 0, 0], (255, 222, 0)),
     ],
 }
 
-MACROS: dict[str, str] = {
-    "LOVE": "heart",
-    "LOVES": "heart",
-    "HEART": "heart",
-    "HEARTS": "heart",
-    "WHEAT": "wheat",
-    "STAR": "star",
-    "STARS": "star",
-    "SMILE": "smile",
-    "SMILES": "smile",
-    "HAPPY": "smile",
-    "SUN": "sun",
-    "SUNNY": "sun",
-    "SAD": "sad",
-    "MEH": "sad",
-    "SNOW": "snow",
-    "SNOWY": "snow",
-    "SNOWING": "snow",
-    "FROZEN": "snow",
-    "COLD": "snow",
-    "ICE": "snow",
-    "HOT": "flame",
-    "FIRE": "flame",
-    "FLAMES": "flame",
-    "LIT": "flame",
-    "MUSIC": "music",
-    "SONG": "music",
-    "SONGS": "music",
-    "MONEY": "dollar",
-    "CASH": "dollar",
-    "DOLLAR": "dollar",
-    "DOLLARS": "dollar",
-    "LIGHTNING": "bolt",
-    "THUNDER": "bolt",
-    "RAIN": "rain",
-    "RAINING": "rain",
-    "RAINY": "rain",
-    "TOOL": "wrench",
-    "TOOLS": "wrench",
-    "WRENCH": "wrench",
-    "BUILD": "wrench",
-    "EMAIL": "email",
-    "EMAILS": "email",
-    "MAIL": "email",
-    "TEXT": "text",
-    "TEXTS": "text",
-    "TEXTING": "text",
-    "MESSAGE": "text",
-    "MESSAGES": "text",
-    "SMS": "text",
-    "HARVEST": "sickle",
-    "SICKLE": "sickle",
-    "REAP": "sickle",
-    "CONNECT": "plug",
-    "CONNECTED": "plug",
-    "PLUG": "plug",
-    "LINK": "plug",
-    "AI": "robot",
-    "ROBOT": "robot",
-    "ROBOTS": "robot",
-    "AGENT": "robot",
-    "AGENTS": "robot",
-    "INVESTIGATE": "search",
-    "FIND": "search",
-    "SEARCH": "search",
-    "LOOKING": "search",
-    "RED": "c_red",
-    "BLUE": "c_blue",
-    "GREEN": "c_green",
-    "YELLOW": "c_yellow",
-    "ORANGE": "c_orange",
-    "PURPLE": "c_purple",
-    "PINK": "c_pink",
-    "WHITE": "c_white",
-    "CYAN": "c_cyan",
-    "RAINBOW": "rainbow",
-    "RAINBOWS": "rainbow",
-    "TREE": "tree",
-    "TREES": "tree",
-    "FOREST": "tree",
-    "UP": "arrow_up",
-    "DOWN": "arrow_down",
-    "LEFT": "arrow_left",
-    "RIGHT": "arrow_right",
-    "JAPAN": "flag_jp",
-    "JAPANESE": "flag_jp",
-    "UKRAINE": "flag_ua",
-    "UKRAINIAN": "flag_ua",
-    "RUSSIA": "flag_ru",
-    "RUSSIAN": "flag_ru",
-    "BULGARIA": "flag_bg",
-    "BULGARIAN": "flag_bg",
-    "GREECE": "flag_gr",
-    "GREEK": "flag_gr",
-    "BRITAIN": "flag_gb",
-    "BRITISH": "flag_gb",
-    "ENGLISH": "flag_gb",
-    "ENGLAND": "flag_gb",
-    "AMERICA": "flag_us",
-    "AMERICAN": "flag_us",
-    "ROMANIA": "flag_ro",
-    "ROMANIAN": "flag_ro",
-    "ITALY": "flag_it",
-    "ITALIAN": "flag_it",
-    "FRANCE": "flag_fr",
-    "FRENCH": "flag_fr",
-    "SPAIN": "flag_es",
-    "SPANISH": "flag_es",
-    "CHINA": "flag_cn",
-    "CHINESE": "flag_cn",
+# -- Word macros (trigger word -> icon name) --
+
+_MACRO_GROUPS: dict[str, list[str]] = {
+    "heart": ["LOVE", "LOVES", "HEART", "HEARTS"],
+    "wheat": ["WHEAT"],
+    "star": ["STAR", "STARS"],
+    "smile": ["SMILE", "SMILES", "HAPPY"],
+    "sun": ["SUN", "SUNNY"],
+    "sad": ["SAD", "MEH"],
+    "snow": ["SNOW", "SNOWY", "SNOWING", "FROZEN", "COLD", "ICE"],
+    "flame": ["HOT", "FIRE", "FLAMES", "LIT"],
+    "music": ["MUSIC", "SONG", "SONGS"],
+    "dollar": ["MONEY", "CASH", "DOLLAR", "DOLLARS"],
+    "bolt": ["LIGHTNING", "THUNDER"],
+    "rain": ["RAIN", "RAINING", "RAINY"],
+    "wrench": ["TOOL", "TOOLS", "WRENCH", "BUILD"],
+    "email": ["EMAIL", "EMAILS", "MAIL"],
+    "text": ["TEXT", "TEXTS", "TEXTING", "MESSAGE", "MESSAGES", "SMS"],
+    "sickle": ["HARVEST", "SICKLE", "REAP"],
+    "plug": ["CONNECT", "CONNECTED", "PLUG", "LINK"],
+    "robot": ["AI", "ROBOT", "ROBOTS", "AGENT", "AGENTS"],
+    "search": ["INVESTIGATE", "FIND", "SEARCH", "LOOKING"],
+    "c_red": ["RED"],
+    "c_blue": ["BLUE"],
+    "c_green": ["GREEN"],
+    "c_yellow": ["YELLOW"],
+    "c_orange": ["ORANGE"],
+    "c_purple": ["PURPLE"],
+    "c_pink": ["PINK"],
+    "c_white": ["WHITE"],
+    "c_cyan": ["CYAN"],
+    "rainbow": ["RAINBOW", "RAINBOWS"],
+    "tree": ["TREE", "TREES", "FOREST"],
+    "arrow_up": ["UP"],
+    "arrow_down": ["DOWN"],
+    "arrow_left": ["LEFT"],
+    "arrow_right": ["RIGHT"],
+    "flag_jp": ["JAPAN", "JAPANESE"],
+    "flag_ua": ["UKRAINE", "UKRAINIAN"],
+    "flag_ru": ["RUSSIA", "RUSSIAN"],
+    "flag_bg": ["BULGARIA", "BULGARIAN"],
+    "flag_gr": ["GREECE", "GREEK"],
+    "flag_gb": ["BRITAIN", "BRITISH", "ENGLISH", "ENGLAND"],
+    "flag_us": ["AMERICA", "AMERICAN"],
+    "flag_ro": ["ROMANIA", "ROMANIAN"],
+    "flag_it": ["ITALY", "ITALIAN"],
+    "flag_fr": ["FRANCE", "FRENCH"],
+    "flag_es": ["SPAIN", "SPANISH"],
+    "flag_cn": ["CHINA", "CHINESE"],
 }
+MACROS: dict[str, str] = {w: icon for icon, ws in _MACRO_GROUPS.items() for w in ws}
 
 TEXT_MACROS: dict[str, str] = {
     "PROBABLY": "PROB",
