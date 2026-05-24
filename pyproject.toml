@@ -47,6 +47,8 @@ dependencies = [
     "packaging>=26.2",
     "keyring>=25.0.0",
     "bleak>=3.0.2",
+    "sounddevice>=0.5.5",
+"assemblyai>=0.64.2",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
@@ -126,7 +128,9 @@ exclude = [
     "src/cli/",
     "src/protocol/",
     "cli.py",
-    "templates/"
+    "templates/",
+    "src/transcription/",
+    "src/audio_reactive/"
 ]
 
 [tool.file_length]
