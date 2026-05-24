@@ -8,11 +8,11 @@ from rich.console import Console
 from rich.live import Live
 from rich.table import Table
 
-from extensions.audio_reactive.capture import AudioCapture
-from extensions.audio_reactive.visualizer import image_to_png_bytes, spectrum_to_image
+from src.audio_reactive.visualizer import image_to_png_bytes, spectrum_to_image
 from src.protocol.commands import CMD_PNG_DATA
 from src.protocol.connection import open_device
 from src.protocol.transport import send_data
+from src.transcription.capture import UnifiedCapture
 
 console = Console()
 
@@ -54,7 +54,7 @@ async def run_audio_reactive(
 ) -> None:
     num_bands = width
 
-    capture = AudioCapture(
+    capture = UnifiedCapture(
         sample_rate=sample_rate,
         block_size=block_size,
         num_bands=num_bands,

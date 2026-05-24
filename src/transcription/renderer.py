@@ -7,7 +7,7 @@ import time
 import numpy as np
 from PIL import Image, ImageDraw
 
-from extensions.transcription.assets import (
+from src.transcription.assets import (
     FONT,
     ICONS,
     LAYERED_ICONS,

@@ -47,7 +47,6 @@ dependencies = [
     "packaging>=26.2",
     "keyring>=25.0.0",
     "bleak>=3.0.2",
-    "pilmoji>=2.0.5",
     "sounddevice>=0.5.5",
 "assemblyai>=0.64.2",
 ]
@@ -130,7 +129,8 @@ exclude = [
     "src/protocol/",
     "cli.py",
     "templates/",
-    "extensions/"
+    "src/transcription/",
+    "src/audio_reactive/"
 ]
 
 [tool.file_length]

@@ -8,12 +8,12 @@ from rich.console import Console
 from rich.live import Live
 from rich.table import Table
 
-from extensions.transcription.capture import UnifiedCapture
-from extensions.transcription.renderer import TextStrip, render_composite_frame
-from extensions.transcription.transcriber import Transcriber
 from src.protocol.commands import CMD_PNG_DATA
 from src.protocol.connection import open_device
 from src.protocol.transport import send_data
+from src.transcription.capture import UnifiedCapture
+from src.transcription.renderer import TextStrip, render_composite_frame
+from src.transcription.transcriber import Transcriber
 
 console = Console()
 

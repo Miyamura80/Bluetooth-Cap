@@ -83,7 +83,7 @@ def main(
         typer.echo(f"[DRY RUN] Would stream transcription to '{device_name}'")
         return
 
-    from extensions.transcription.engine import run_transcription
+    from src.transcription.engine import run_transcription
 
     asyncio.run(
         run_transcription(

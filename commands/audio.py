@@ -81,7 +81,7 @@ def main(
         typer.echo(f"[DRY RUN] Would stream audio visualization to '{device_name}'")
         return
 
-    from extensions.audio_reactive.engine import run_audio_reactive
+    from src.audio_reactive.engine import run_audio_reactive
 
     asyncio.run(
         run_audio_reactive(
