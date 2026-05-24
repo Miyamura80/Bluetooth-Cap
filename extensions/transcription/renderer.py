@@ -234,7 +234,7 @@ class TextStrip:
         ]
 
         for row_idx, line in enumerate(self._lines):
-            y = row_idx * (self._row_height + 1)
+            y = row_idx * self._row_height
             for word, wx in line:
                 self._draw_word(pixels, word, wx, y)
 
@@ -253,11 +253,11 @@ class TextStrip:
                 self._wipe()
                 pending = self._pending_words
                 self._pending_words = []
-                for word in pending:
+                for i, word in enumerate(pending):
                     if self._cursor_row == 1 and self._would_overflow(word):
                         self._frame = self._render()
                         self._linger_until = time.monotonic() + 1.0
-                        self._pending_words = pending[pending.index(word) :]
+                        self._pending_words = pending[i:]
                         return self._frame
                     self._place_word(word)
                 self._frame = self._render()

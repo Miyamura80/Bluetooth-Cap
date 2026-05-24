@@ -87,7 +87,7 @@ async def run_transcription(
     audio_device: int | None = None,
     spectrum_height: int = 1,
 ) -> None:
-    text_height = height - spectrum_height
+    text_height = max(1, height - spectrum_height)
 
     capture = UnifiedCapture(
         sample_rate=sample_rate,
