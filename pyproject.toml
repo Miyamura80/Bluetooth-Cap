@@ -137,6 +137,11 @@ exclude = [
 max_lines = 500
 exclude = []
 
+[tool.uv]
+# Exempt certifi from the exclude-newer cooldown so the eMudhra CA response
+# (2026.10.19, drops emSign ECC Root CA - G3) isn't quarantined.
+exclude-newer-package = { certifi = false }
+
 [tool.coverage.run]
 branch = true
 source = ["src", "common", "utils", "commands"]
